@@ -10,24 +10,25 @@ class Camera2D
 protected:
 	double offsetX, offsetY;
 	double mapping;
+	double sdvigX, sdvigY;
 	double L, R, B, T;					// Мировые координаты границ рабочей области окна
 	int W, H;							// Разрешение рабочей области окна
 	int WorldToScreenX(double X)		// Переход от мировых координат к экранным (для абсциссы)
 	{
-		return (X - L) * W * mapping / (R - L);
+		return (X - L + sdvigX) * W * mapping / (R - L);
 	}
 	
 	int WorldToScreenY(double Y)		// Переход от мировых координат к экранным (для ординаты)
 	{
-		return (T - Y) * H * mapping / (T - B);
+		return (T - Y + sdvigY) * H * mapping / (T - B);
 	}
 	double ScreenToWorldX(int X)		// Переход от экранных координат к мировым (для абсциссы)
 	{
-		return X * (R - L) * 1.0 / (W * mapping) + L;
+		return (sdvigX + X) * (R - L) * 1.0 / (W * mapping) + L ;
 	}
 	double ScreenToWorldY(int Y)		// Переход от экранных координат к мировым (для ординаты)
 	{
-		return T - (T - B) * 1.0 * Y / (H * mapping);
+		return T - (T - B) * 1.0 * (sdvigY + Y) / (H * mapping);
 	}
 private:
 	bool isDragging;
@@ -42,6 +43,7 @@ public:
 		mapping = 1;
 		W = 1;
 		H = 1;
+		sdvigX = sdvigY = 0;
 		isDragging = false;
 		offsetX = 0;
 		offsetY = 0;
@@ -150,11 +152,27 @@ public:
 	}
 
 	void IncreaseSize(long x, long y) {
+		double savedX = ScreenToWorldX(x);
+		double savedY = ScreenToWorldY(y);
 		mapping += 0.1;
+		double newX = ScreenToWorldX(x);
+		double newY = ScreenToWorldY(y);
+		L -= (savedX - newX) / 2;
+		R += (savedX - newX) / 2;
+		B -= (savedY - newY) / 2;
+		T += (savedY - newY) / 2;
 	}
 
 	void DecreaseSize(long x, long y) {
+		double savedX = ScreenToWorldX(x);
+		double savedY = ScreenToWorldY(y);
 		mapping -= 0.1;
+		double newX = ScreenToWorldX(x);
+		double newY = ScreenToWorldY(y);
+		L -= (savedX - newX) / 2;
+		R += (savedX - newX) / 2;
+		B -= (savedY - newY) / 2;
+		T += (savedY - newY) / 2;
 	}
 };
 
