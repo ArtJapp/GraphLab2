@@ -115,25 +115,28 @@ public:
 
 	void Drag(int X, int Y)
 	{
+
+		double step = offsetX - ScreenToWorldX(X);
+		step = step > 0 ? step : -step;
 		if (offsetX - ScreenToWorldX(X) < 0) {
 			//means moving to left
-			L -= 0.1;
-			R -= 0.1;
+			L -= step;
+			R -= step;
 		} else 
 		if (offsetX - ScreenToWorldX(X) > 0) {
 			//means moving to right
-			L += 0.1;
-			R += 0.1;
+			L += step;
+			R += step;
 		} 
 		if (offsetY - ScreenToWorldY(Y) < 0) {
 			//means moving to bottom
-			B -= 0.1;
-			T -= 0.1;
+			B -= step;
+			T -= step;
 		} else
 		if (offsetY - ScreenToWorldY(Y) > 0) {
 			//means moving to top
-			B += 0.1;
-			T += 0.1;
+			B += step;
+			T += step;
 		}
 		offsetX = ScreenToWorldX(X);
 		offsetY = ScreenToWorldY(Y);
