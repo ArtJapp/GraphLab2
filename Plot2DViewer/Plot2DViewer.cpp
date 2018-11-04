@@ -81,17 +81,15 @@ LRESULT _stdcall WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)		// 
 			P.x = GET_X_LPARAM(lParam);
 			P.y = GET_Y_LPARAM(lParam);
 			ScreenToClient(hWnd, &P);
-		//	if (scene.InnerPoint(P.x, P.y)) {
-				if (GET_WHEEL_DELTA_WPARAM(wParam) > 0)
-				{
-					scene.IncreaseSize();
-
-				}
-				else {
-					scene.DecreaseSize();
-				}
-				InvalidateRect(hWnd, nullptr, false);
-			//}
+			if (GET_WHEEL_DELTA_WPARAM(wParam) > 0)
+			{
+				scene.IncreaseSize(P.x, P.y);
+			}
+			else {
+				scene.DecreaseSize(P.x, P.y);
+			}
+			InvalidateRect(hWnd, nullptr, false);
+			
 
 		}
 

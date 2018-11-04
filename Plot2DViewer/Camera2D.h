@@ -129,25 +129,15 @@ public:
 			//means moving to bottom
 			B -= 0.1;
 			T -= 0.1;
-			std::fstream fout("filek.txt", std::ios::app);
-			fout << "Bottom: " << T << " " << B << ";\n";
 		} else
 		if (offsetY - ScreenToWorldY(Y) > 0) {
-			//means moving to bottom
-		//	B += offsetY - ScreenToWorldY(Y);
-		//	T += offsetY - ScreenToWorldY(Y);
+			//means moving to top
 			B += 0.1;
 			T += 0.1;
-			std::fstream fout("filek.txt", std::ios::app);
-			fout << "Top: " << T << " " << B << ";\n";
 		}
 		offsetX = ScreenToWorldX(X);
 		offsetY = ScreenToWorldY(Y);
-		//L += X;
-		//T += Y;
-	//	R += X;
 		
-		//B += ScreenToWorldY(Y);
 	}
 	void StopDragging()
 	{
@@ -159,11 +149,11 @@ public:
 		return isDragging;
 	}
 
-	void IncreaseSize() {
+	void IncreaseSize(long x, long y) {
 		mapping += 0.1;
 	}
 
-	void DecreaseSize() {
+	void DecreaseSize(long x, long y) {
 		mapping -= 0.1;
 	}
 };
