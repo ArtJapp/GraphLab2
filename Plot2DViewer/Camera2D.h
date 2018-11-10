@@ -14,12 +14,12 @@ protected:
 	int W, H;							// Разрешение рабочей области окна
 	int WorldToScreenX(double X)		// Переход от мировых координат к экранным (для абсциссы)
 	{
-		return (X - L) * W * mapping / (R - L);
+		return round((X - L) * W * mapping / (R - L));
 	}
 	
 	int WorldToScreenY(double Y)		// Переход от мировых координат к экранным (для ординаты)
 	{
-		return (T - Y) * H * mapping / (T - B);
+		return round((T - Y) * H * mapping / (T - B));
 	}
 	double ScreenToWorldX(int X)		// Переход от экранных координат к мировым (для абсциссы)
 	{
@@ -94,14 +94,23 @@ public:
 	}
 	void Axes(HDC dc)
 	{
+		RECT r;
+		GetClientRect(WindowFromDC(dc), &r);
+
 		MoveTo(0, ScreenToWorldY(0));
-		LineTo1(dc, 0, ScreenToWorldY(H));
+		LineTo1(dc, 0, ScreenToWorldY(r.bottom));
 
 		MoveTo(ScreenToWorldX(0), 0);
-		LineTo1(dc, ScreenToWorldX(W), 0);
+		LineTo1(dc, ScreenToWorldX(r.right), 0);
+
+		
 
 		MoveTo(ScreenToWorldX(0), 0);
 		// Отрисовка координатных осей
+	}
+
+	double getStep() {
+		return (R - L) / 10;
 	}
 
 	void StartDragging(/*HDC dc,*/ int X, int Y)
@@ -120,23 +129,19 @@ public:
 		step = step > 0 ? step : -step;
 		if (offsetX - ScreenToWorldX(X) < 0) {
 			//means moving to left
-			L -= step;
-			R -= step;
+			Move(-step, 0);
 		} else 
 		if (offsetX - ScreenToWorldX(X) > 0) {
 			//means moving to right
-			L += step;
-			R += step;
+			Move(step, 0);
 		} 
 		if (offsetY - ScreenToWorldY(Y) < 0) {
 			//means moving to bottom
-			B -= step;
-			T -= step;
+			Move(0, -step);
 		} else
 		if (offsetY - ScreenToWorldY(Y) > 0) {
 			//means moving to top
-			B += step;
-			T += step;
+			Move(0, step);
 		}
 		offsetX = ScreenToWorldX(X);
 		offsetY = ScreenToWorldY(Y);
@@ -152,12 +157,25 @@ public:
 		return isDragging;
 	}
 
+	void Move(double X, double Y) {
+		L += X;
+		R += X;
+		B += Y;
+		T += Y;
+	}
+
 	void IncreaseSize(long x, long y) {
+		double savedX = ScreenToWorldX(x);
+		double savedY = ScreenToWorldY(y);
 		mapping += 0.1;
+		Move(savedX - ScreenToWorldX(x), savedY - ScreenToWorldY(y));
 	}
 
 	void DecreaseSize(long x, long y) {
+		double savedX = ScreenToWorldX(x);
+		double savedY = ScreenToWorldY(y);
 		mapping -= 0.1;
+		Move(savedX - ScreenToWorldX(x), savedY - ScreenToWorldY(y));
 	}
 };
 

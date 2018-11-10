@@ -96,6 +96,40 @@ LRESULT _stdcall WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)		// 
 		return 0;
 	}
 
+	case WM_KEYDOWN:
+	{
+		HDC dc = GetDC(hWnd);
+
+
+		switch (wParam)
+		{
+		case VK_LEFT:
+		{
+			scene.Move(-scene.getStep(), 0);
+			break;
+		}
+		case VK_RIGHT:
+		{
+			scene.Move(scene.getStep(), 0);
+			break;
+		}
+		case VK_UP:
+		{
+			scene.Move(0, scene.getStep());
+			break;
+		}
+		case VK_DOWN:
+		{
+			scene.Move(0, -scene.getStep());
+			break;
+		}
+		}
+
+		InvalidateRect(hWnd, nullptr, false);
+		scene.Clear(dc);
+		return 0;
+	}
+
 	case WM_MOUSEMOVE:
 	{
 		if (scene.IsDragging())
